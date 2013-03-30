@@ -1,17 +1,17 @@
 <?php
-if(!defined('OSTADMININC') || !$thisstaff || !$thisstaff->isAdmin()) die('Access Denied');
+if(!defined('OSTADMININC') || !$thisstaff || !$thisstaff->isAdmin()) die(_('Access Denied'));
 $info=array();
 $qstr='';
 if($api && $_REQUEST['a']!='add'){
-    $title='Update API Key';
+    $title=_('Update API Key');
     $action='update';
-    $submit_text='Save Changes';
+    $submit_text=_('Save Changes');
     $info=$api->getHashtable();
     $qstr.='&id='.$api->getId();
 }else {
-    $title='Add New API Key';
+    $title=_('Add New API Key');
     $action='add';
-    $submit_text='Add Key';
+    $submit_text=_('Add Key');
     $info['isactive']=isset($info['isactive'])?$info['isactive']:1;
     $qstr.='&a='.urlencode($_REQUEST['a']);
 }
@@ -28,25 +28,25 @@ $info=Format::htmlchars(($errors && $_POST)?$_POST:$info);
         <tr>
             <th colspan="2">
                 <h4><?php echo $title; ?></h4>
-                <em>API Key is auto-generated. Delete and re-add to change the key.</em>
+                <em><?= _("API Key is auto-generated. Delete and re-add to change the key.")?></em>
             </th>
         </tr>
     </thead>
     <tbody>
         <tr>
             <td width="150" class="required">
-                Status:
+                <?=_("Status")?>:
             </td>
             <td>
-                <input type="radio" name="isactive" value="1" <?php echo $info['isactive']?'checked="checked"':''; ?>><strong>Active</strong>
-                <input type="radio" name="isactive" value="0" <?php echo !$info['isactive']?'checked="checked"':''; ?>>Disabled
+                <input type="radio" name="isactive" value="1" <?php echo $info['isactive']?'checked="checked"':''; ?>><strong><?= _('Active' )?></strong>
+                <input type="radio" name="isactive" value="0" <?php echo !$info['isactive']?'checked="checked"':''; ?>><?= _('Disabled')?>
                 &nbsp;<span class="error">*&nbsp;</span>
             </td>
         </tr>
         <?php if($api){ ?>
         <tr>
             <td width="150">
-                IP Address:
+                <?=_("IP Address")?>:
             </td>
             <td>
                 <?php echo $api->getIPAddr(); ?>
@@ -54,14 +54,14 @@ $info=Format::htmlchars(($errors && $_POST)?$_POST:$info);
         </tr>
         <tr>
             <td width="150">
-                API Key:
+                <?=_("API Key")?>:
             </td>
             <td><?php echo $api->getKey(); ?> &nbsp;</td>
         </tr>
         <?php }else{ ?>
         <tr>
             <td width="150" class="required">
-               IP Address:
+               <?=_("IP Address")?>:
             </td>
             <td>
                 <input type="text" size="30" name="ipaddr" value="<?php echo $info['ipaddr']; ?>">
@@ -71,14 +71,14 @@ $info=Format::htmlchars(($errors && $_POST)?$_POST:$info);
         <?php } ?>
         <tr>
             <th colspan="2">
-                <em><strong>Services:</strong>: Check applicable API services enabled for the key.</em>
+                <em><strong><?=_("Enabled Services")?>:</strong>: <?=_("Check applicable API services. All active keys can make cron call.")?></em>
             </th>
         </tr>
         <tr>
             <td colspan=2 style="padding-left:5px">
                 <label>
                     <input type="checkbox" name="can_create_tickets" value="1" <?php echo $info['can_create_tickets']?'checked="checked"':''; ?> >
-                    Can Create Tickets <em>(XML/JSON/EMAIL)</em>
+                <?=_("Can Create Tickets.")?> <em>(XML/JSON/PIPE)</em>
                 </label>
             </td>
         </tr>
@@ -86,13 +86,13 @@ $info=Format::htmlchars(($errors && $_POST)?$_POST:$info);
             <td colspan=2 style="padding-left:5px">
                 <label>
                     <input type="checkbox" name="can_exec_cron" value="1" <?php echo $info['can_exec_cron']?'checked="checked"':''; ?> >
-                    Can Execute Cron
+                    <?=_("Can Execute Cron")?>
                 </label>
             </td>
         </tr>
         <tr>
             <th colspan="2">
-                <em><strong>Admin Notes</strong>: Internal notes.&nbsp;</em>
+                <em><strong><?= _('Admin Notes') ?></strong>: <?= _('Internal notes.') ?>&nbsp;</em>
             </th>
         </tr>
         <tr>
@@ -104,7 +104,7 @@ $info=Format::htmlchars(($errors && $_POST)?$_POST:$info);
 </table>
 <p style="padding-left:225px;">
     <input type="submit" name="submit" value="<?php echo $submit_text; ?>">
-    <input type="reset"  name="reset"  value="Reset">
-    <input type="button" name="cancel" value="Cancel" onclick='window.location.href="apikeys.php"'>
+    <input type="reset"  name="reset"  value="<?= _('Reset') ?>">
+    <input type="button" name="cancel" value="<?= _('Cancel') ?>" onclick='window.location.href="apikeys.php"'>
 </p>
 </form>
