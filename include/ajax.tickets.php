@@ -178,11 +178,11 @@ class TicketsAjaxAPI extends AjaxController {
         
         $sql="$select $from $where $groupby";
         if(($tickets=db_result(db_query($sql)))) {
-            $result['success'] =sprintf("Search criteria matched %s - <a href='tickets.php?%s'>view</a>",
-                                        ($tickets>1?"$tickets tickets":"$tickets ticket"),
+            $result['success'] =sprintf(_("Search criteria matched")." %s - <a href='tickets.php?%s'>"._("view")."</a>",
+                                        ($tickets>1?"$tickets "._("tickets"):"$tickets "._("ticket")),
                                         str_replace(array('&amp;', '&'), array('&', '&amp;'), $_SERVER['QUERY_STRING']));
         } else {
-            $result['fail']='No tickets found matching your search criteria.';
+            $result['fail']=_('No tickets found matching your search criteria.');
         }
             
         return $this->json_encode($result);
@@ -202,7 +202,7 @@ class TicketsAjaxAPI extends AjaxController {
             /*Note: Ticket->acquireLock does the same logic...but we need it here since we need to know who owns the lock up front*/
             //Ticket is locked by someone else.??
             if($lock->getStaffId()!=$thisstaff->getId())
-                return $this->json_encode(array('id'=>0, 'retry'=>false, 'msg'=>'Unable to acquire lock.'));
+                return $this->json_encode(array('id'=>0, 'retry'=>false, 'msg'=>_('Unable to acquire lock.')));
             
             //Ticket already locked by staff...try renewing it.
             $lock->renew(); //New clock baby!
@@ -266,9 +266,9 @@ class TicketsAjaxAPI extends AjaxController {
         $error=$msg=$warn=null;
 
         if($lock && $lock->getStaffId()==$thisstaff->getId())
-            $warn.='&nbsp;<span class="Icon lockedTicket">Ticket is locked by '.$lock->getStaffName().'</span>';
+            $warn.='&nbsp;<span class="Icon lockedTicket">'._('Ticket is locked by').' '.$lock->getStaffName().'</span>';
         elseif($ticket->isOverdue())
-            $warn.='&nbsp;<span class="Icon overdueTicket">Marked overdue!</span>';
+            $warn.='&nbsp;<span class="Icon overdueTicket">'._('Marked overdue!').'</span>';
        
         ob_start();
         echo sprintf(
@@ -284,17 +284,17 @@ class TicketsAjaxAPI extends AjaxController {
 
         echo '<table border="0" cellspacing="" cellpadding="1" width="100%" class="ticket_info">';
 
-        $ticket_state=sprintf('<span>%s</span>',ucfirst($ticket->getStatus()));
+        $ticket_state=sprintf('<span>%s</span>',_(ucfirst($ticket->getStatus())));
         if($ticket->isOpen()) {
             if($ticket->isOverdue())
-                $ticket_state.=' &mdash; <span>Overdue</span>';
+                $ticket_state.=' &mdash; <span>'._('Overdue').'</span>';
             else
                 $ticket_state.=sprintf(' &mdash; <span>%s</span>',$ticket->getPriority());
         }
 
         echo sprintf('
                 <tr>
-                    <th width="100">Ticket State:</th>
+                    <th width="100">'._('Ticket State').':</th>
                     <td>%s</td>
                 </tr>
                 <tr>
@@ -314,7 +314,7 @@ class TicketsAjaxAPI extends AjaxController {
         } elseif($ticket->getEstDueDate()) {
             echo sprintf('
                     <tr>
-                        <th>Due Date:</th>
+                        <th>'._('Due Date').':</th>
                         <td>%s</td>
                     </tr>',
                     Format::db_datetime($ticket->getEstDueDate()));
@@ -327,21 +327,21 @@ class TicketsAjaxAPI extends AjaxController {
         if($ticket->isOpen()) {
             echo sprintf('
                     <tr>
-                        <th width="100">Assigned To:</th>
+                        <th width="100">'._('Assigned To').':</th>
                         <td>%s</td>
-                    </tr>',$ticket->isAssigned()?implode('/', $ticket->getAssignees()):' <span class="faded">&mdash; Unassigned &mdash;</span>');
+                    </tr>',$ticket->isAssigned()?implode('/', $ticket->getAssignees()):' <span class="faded">&mdash; '._('Unassigned').' &mdash;</span>');
         }
         echo sprintf(
             '   <tr>
-                    <th width="100">Department:</th>
+                    <th width="100">'._('Department').':</th>
                     <td>%s</td>
                 </tr>
                 <tr>
-                    <th>Help Topic:</th>
+                    <th>'._('Help Topic').':</th>
                     <td>%s</td>
                 </tr>
                 <tr>
-                    <th>From:</th>
+                    <th>'._('From').':</th>
                     <td>%s <span class="faded">%s</span></td>
                 </tr>',
             Format::htmlchars($ticket->getDeptName()),
@@ -350,23 +350,23 @@ class TicketsAjaxAPI extends AjaxController {
             $ticket->getEmail());
         echo '
             </table>';
-        $options[]=array('action'=>'Thread ('.$ticket->getThreadCount().')','url'=>"tickets.php?id=$tid");
+        $options[]=array('action'=>_('Thread').' ('.$ticket->getThreadCount().')','url'=>"tickets.php?id=$tid");
         if($ticket->getNumNotes())
-            $options[]=array('action'=>'Notes ('.$ticket->getNumNotes().')','url'=>"tickets.php?id=$tid#notes");
+            $options[]=array('action'=>_('Notes').' ('.$ticket->getNumNotes().')','url'=>"tickets.php?id=$tid#notes");
         
         if($ticket->isOpen())
-            $options[]=array('action'=>'Reply','url'=>"tickets.php?id=$tid#reply");
+            $options[]=array('action'=>_('Reply'),'url'=>"tickets.php?id=$tid#reply");
 
         if($thisstaff->canAssignTickets())
-            $options[]=array('action'=>($ticket->isAssigned()?'Reassign':'Assign'),'url'=>"tickets.php?id=$tid#assign");
+            $options[]=array('action'=>($ticket->isAssigned()?_('Reassign'):_('Assign')),'url'=>"tickets.php?id=$tid#assign");
 
         if($thisstaff->canTransferTickets())
-            $options[]=array('action'=>'Transfer','url'=>"tickets.php?id=$tid#transfer");
+            $options[]=array('action'=>_('Transfer'),'url'=>"tickets.php?id=$tid#transfer");
 
-        $options[]=array('action'=>'Post Note','url'=>"tickets.php?id=$tid#note");
+        $options[]=array('action'=>_('Post Note'),'url'=>"tickets.php?id=$tid#note");
 
         if($thisstaff->canEditTickets())
-            $options[]=array('action'=>'Edit Ticket','url'=>"tickets.php?id=$tid&a=edit");
+            $options[]=array('action'=>_('Edit Ticket'),'url'=>"tickets.php?id=$tid&a=edit");
 
         if($options) {
             echo '<ul class="tip_menu">';

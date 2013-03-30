@@ -16,7 +16,6 @@
 require('client.inc.php');
 $section = 'home';
 require(CLIENTINC_DIR.'header.inc.php');
-var_dump($_SESSION['lang'])
 ?>
 
 <div id="landing_page">
