@@ -110,10 +110,9 @@ $info['id']=$staff->getId();
             </td>
         </tr>
         <tr>
-            <td width="180">Maximum Page size:</td>
+            <td width="180"><?= _('Maximum Page size')?>:</td>
             <td>
                 <select name="max_page_size">
-            <td width="180"><?= _('Maximum Page size')?>:</td>
                     <?php
                     $pagelimit=$info['max_page_size']?$info['max_page_size']:$cfg->getPageSize();
                     for ($i = 5; $i <= 50; $i += 5) {
