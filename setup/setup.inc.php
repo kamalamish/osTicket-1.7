@@ -15,7 +15,11 @@
 **********************************************************************/
 
 #This  version - changed on every release
+<<<<<<< HEAD
 define('THIS_VERSION', '1.7-RC6+');
+=======
+define('THIS_VERSION', '1.7.0');
+>>>>>>> master
 
 #inits - error reporting.
 $error_reporting = E_ALL & ~E_NOTICE;
